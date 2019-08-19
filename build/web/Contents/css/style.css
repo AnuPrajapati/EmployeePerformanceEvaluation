@@ -1,0 +1,39 @@
+.carousel-item {
+  height: 100vh;
+  min-height: 300px;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+.carousel-caption{
+  padding-bottom: 10px;
+  font-family: poppins;
+
+}
+
+.carousel-caption h3{
+  font-size: 20px;
+  text-transform:full-width;
+  font-weight: bold;
+  color: black;
+    font-family:serif;
+}
+.nav-link{
+
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.carousel-item{
+  position: relative;
+}
+
+.carousel-caption{
+  position: absolute
+  z-index: 99;
+  top:47.5%;
+  left: 18%;
+
+}
