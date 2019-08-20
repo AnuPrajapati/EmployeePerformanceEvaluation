@@ -14,10 +14,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import model.EmployeeDAO;
 import model.RecordModel;
 
@@ -31,42 +33,45 @@ public class RecordInsertServlet extends HttpServlet {
             throws ServletException, IOException, SQLException {
         PrintWriter out = response.getWriter();
         response.setContentType("text/html;charset=UTF-8");
-        int a = Integer.parseInt(request.getParameter("count"));
-        for (int i = 0; i < 102; i++) {
-            String eid = request.getParameter("eeid");
-            String jja = request.getParameter("communication1" + eid);
-            out.print("<br>" + eid + "=" + jja + "<br>");
-        }
+        HttpSession session = request.getSession();
+        int id = (int) session.getAttribute("id");
+        int statuscount = EmployeeDAO.getCountForStatus(1);
 
-//        Connection con = DBConnection.createConnection();
-//        PreparedStatement stmt = null;
-//
-//        ResultSet rs = null;
-//
-//        String sql = "select * from employee  WHERE id=1 order bye_id e_id";
-//
-//        stmt = conn.prepareStatement(sql);
-//        int count = 0;
-//        rs = stmt.executeQuery(sql);
-//        int statuscount = EmployeeDAO.countStatus(1);
-//        while (rs.next()) {
-//            int i = rs.getInt("e_id");
-//            String jja = request.getParameter("communication1" + i);
-//            out.print(i + "=" + jja + "<br>");
-//            double com = Double.parseDouble(request.getParameter('communication<%=rs.getInt("e_id")%>'));
-//            double att = Double.parseDouble(request.getParameter("attendence"));
-//            double attitude = Double.parseDouble(request.getParameter("attitude"));
-//            double rel = Double.parseDouble(request.getParameter("reliability"));
-//            double work = Double.parseDouble(request.getParameter("work_product"));
-//            double adap = Double.parseDouble(request.getParameter("adaptability"));
-//            int e_id = Integer.parseInt(request.getParameter("e_id"));
-//            RecordModel model = new RecordModel(com, work, adap, rel, attitude, att, e_id);
-//            String in = EmployeeDAO.InsertRecord(model);
-//    }
-//
-//        if (in.equals("SUCCESS")) {
-//
-//        }
+        int inn = statuscount + 1;
+        String incstatus = EmployeeDAO.UpdatecountStatus(1, inn);
+        out.print(incstatus);
+        if (incstatus.equals("SUCCESS")) {
+            Connection conn = DBConnection.createConnection();
+            PreparedStatement stmt = null;
+
+            ResultSet rs = null;
+
+            String sql = "select * from employee   WHERE id=" + id + " order by e_id";
+
+            stmt = conn.prepareStatement(sql);
+
+            rs = stmt.executeQuery(sql);
+
+            out.println("inn=" + inn);
+            String in = null;
+            while (rs.next()) {
+
+                int eid = rs.getInt("e_id");
+                double com = Double.parseDouble(request.getParameter("communication" + eid));
+
+                double att = Double.parseDouble(request.getParameter("attendance" + eid));
+                double attitude = Double.parseDouble(request.getParameter("attitude" + eid));
+                double rel = Double.parseDouble(request.getParameter("reliability" + eid));
+                double work = Double.parseDouble(request.getParameter("work_product" + eid));
+                double adap = Double.parseDouble(request.getParameter("adaptability" + eid));
+
+                RecordModel model = new RecordModel(com, work, adap, rel, attitude, att, eid, id, inn);
+                in = EmployeeDAO.InsertRecord(model);
+
+            }
+            RequestDispatcher req = request.getRequestDispatcher("AllUserRecordDetail.jsp");
+            req.forward(request, response);
+        }
     }
 
     @Override

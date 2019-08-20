@@ -33,6 +33,7 @@ public class EmployeeDAO {
         double attendance = registerBean.getAttendance();
 
         int e_id = registerBean.getE_id();
+        int status = registerBean.getStatus();
 
         if (communication > 5 || work_product > 5 || adaptability > 5 || reliablity > 5 || attendance > 5 || attitude > 5) {
             return " Insert fail because of invalid value i.e greater than 5";
@@ -44,7 +45,7 @@ public class EmployeeDAO {
         try {
             con = DBConnection.createConnection();
 
-            String query = "insert into record(work_product,communication,attendences,attitude,adaptability,reliability,e_id) values (?,?,?,?,?,?,?)"; //Insert user details into the table 'USERS'
+            String query = "insert into record(work_product,communication,attendences,attitude,adapatability,reliability,e_id,status) values (?,?,?,?,?,?,?,?)"; //Insert user details into the table 'USERS'
             preparedStatement = con.prepareStatement(query); //Making use of prepared statements here to insert bunch of data
             preparedStatement.setDouble(1, work_product);
             preparedStatement.setDouble(2, communication);
@@ -53,6 +54,7 @@ public class EmployeeDAO {
             preparedStatement.setDouble(5, adaptability);
             preparedStatement.setDouble(6, reliablity);
             preparedStatement.setInt(7, e_id);
+            preparedStatement.setInt(8, status);
 
             i = preparedStatement.executeUpdate();
 
@@ -71,7 +73,7 @@ public class EmployeeDAO {
         // On failure, send a message from here.
     }
 
-    // count for status
+    // count for status in record table
     public static int countStatus(int mid) {
         int a = 0;
         Connection conn = null;
@@ -361,10 +363,7 @@ public class EmployeeDAO {
 
             int i = preparedStatement.executeUpdate();
 
-            if (i != 0) //Just to ensure data has been inserted into the database
-            {
-                return "SUCCESS";
-            }
+            return "Success";
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -376,30 +375,28 @@ public class EmployeeDAO {
         // On failure, send a message from here.
     }
 
-    public String UpdatecountStatus(int mid, int count) {
+    public static String UpdatecountStatus(int mid, int count) {
 
         Connection con = null;
-        PreparedStatement preparedStatement = null;
-
+        PreparedStatement pst = null;
         try {
             con = DBConnection.createConnection();
-            String query = "Update countrecord set count=" + count + "where mid=" + mid + ""; //update user details into the table 'USERS'
-            preparedStatement = con.prepareStatement(query); //Making use of prepared statements here to insert bunch of data
+            String query = "Update countrecord set count=? where mid=? "; //update user details into the table 'USERS'
+            pst = con.prepareCall(query);
+            pst.setInt(1, count);
+            pst.setInt(2, mid);
+            pst.executeUpdate();
 
-            int i = preparedStatement.executeUpdate();
+            return "SUCCESS";
 
-            if (i != 0) //Just to ensure data has been inserted into the database
-            {
-                return "SUCCESS";
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             // close JDBC objects
-            close(con, preparedStatement, null);
+            close(con, pst, null);
         }
 
-        return "Oops.. Something went wrong there..!";
+        return "Oops.. Something went wrong there. in updating record.!";
         // On failure, send a message from here.
     }
 
@@ -530,15 +527,15 @@ public class EmployeeDAO {
             String query = search;
             if (query != null) {
                 if (a == 1) {
-                    sql = "SELECT p.* ,e.*, r.*  ,(r.work_product+r.communication+r.attendences+r.attitude+r.adapatability+r.reliability)/6 AS mean FROM employee e INNER JOIN record r on e.e_id=r.r_id INNER JOIN performance p on r.r_id=p.r_id WHERE e.id=? And r.status=? AND e.name LIKE '%" + query + "%' ";
+                    sql = "SELECT p.* ,e.*, r.*  ,(r.work_product+r.communication+r.attendences+r.attitude+r.adapatability+r.reliability)/6 AS mean FROM employee e INNER JOIN record r on e.e_id=r.e_id INNER JOIN performance p on r.r_id=p.r_id WHERE e.id=? And r.status=? AND e.name LIKE '%" + query + "%' ";
                 }
             } else {
                 // create sql statement
                 if (a == 1) {
-                    sql = "SELECT p.*, e.*, r.*,(r.work_product+r.communication+r.attendences+r.attitude+r.adapatability+r.reliability)/6 AS mean FROM employee e INNER JOIN record r on e.e_id=r.r_id INNER JOIN performance p on r.r_id=p.r_id WHERE e.id=? And r.status=? ORDER BY e.e_id";
+                    sql = "SELECT p.*, e.*, r.*,(r.work_product+r.communication+r.attendences+r.attitude+r.adapatability+r.reliability)/6 AS mean FROM employee e INNER JOIN record r on e.e_id=r.e_id INNER JOIN performance p on r.r_id=p.r_id WHERE e.id=? And r.status=? ORDER BY e.e_id";
 
                 } else {
-                    sql = "SELECT e.*, r.*,(r.work_product+r.communication+r.attendences+r.attitude+r.adapatability+r.reliability)/6 AS mean FROM employee e INNER JOIN record r on e.e_id=r.r_id WHERE e.id=? And r.status=? ORDER BY e.e_id";
+                    sql = "SELECT e.*, r.*,(r.work_product+r.communication+r.attendences+r.attitude+r.adapatability+r.reliability)/6 AS mean FROM employee e INNER JOIN record r on e.e_id=r.e_id WHERE e.id=? And r.status=? ORDER BY e.e_id";
                 }
             }
             myStmt = myConn.prepareStatement(sql);
@@ -660,7 +657,6 @@ public class EmployeeDAO {
 
         return fair;
     }
-    //for company
 
     public static int getCountForStatus(int mid) {
         Connection con = null;
@@ -669,7 +665,7 @@ public class EmployeeDAO {
         int fair = 0;
         con = DBConnection.createConnection();
 
-        String sql = " SELECT count from recordcount where mid=" + mid + "";
+        String sql = " SELECT count from countrecord where mid=" + mid + "";
 
         try {
             s = con.createStatement();

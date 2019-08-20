@@ -20,6 +20,7 @@
     </head>
     <body>
         <%
+            int id = (int) session.getAttribute("id");
             try{
             Connection conn=DBConnection.createConnection();
             PreparedStatement stmt=null;
@@ -27,7 +28,7 @@
         ResultSet rs = null;
       
           
-            String sql = "select * from employee   WHERE id=1 order by e_id";
+            String sql = "select * from employee WHERE id="+ id+" order by e_id";
 
             stmt = conn.prepareStatement(sql);
 int count=0;
@@ -42,7 +43,7 @@ int count=0;
 %>
       
                 <%=rs.getString("name")%>
-                <input type="hidden" name="eeid" value='<%=rs.getInt("e_id")%>'>
+               
                 <div class="container border border-primary">
                    
  <div class="form-group row">

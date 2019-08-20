@@ -50,6 +50,7 @@ public class Algorithm extends HttpServlet {
             d[j] = (double) o[j];
 
         }
+
         double centroid[][] = new double[][]{
             {0, 0, 0, 0},
             {1, 2, 3.5, 4}

@@ -115,16 +115,16 @@
 
 <div class="container emplyee_table">
     <div id="form-wrapper" style="max-width:210px;margin:auto;">
-       <form method="Post" class="form-inline">
+       <form method="get" class="form-inline">
         <div class="form-group mb-2">    
-        <select id="searchstatus" class="form-control" name="searchstatus" onchange="test()">
-            <%    int name = EmployeeDAO.countStatus(Integer.parseInt(id));
+        <select id="searchstatus" class="form-control" name="searchstatus" >
+            <%    int name = EmployeeDAO.getCountForStatus(Integer.parseInt(id));
             %>
-            <option value="<%=name%>" selected="selected">Record<%=name%></option>
+           
             <%
                 for (int i = name; i > 0; i--) {
             %>
-            <option value="<%=i%> " >Record <%=i%></option>
+            <option value="<%=i%>" >Record <%=i%></option>
             <%
               }%>
 
@@ -202,8 +202,8 @@
         </div>
              
            <div class="container">       
-        <button type="submit" class="btn btn-lg" onclick="window.location.href='Algorithm'" >Show Rating Data</button>
-          <button type="submit" class="btn btn-lg" onclick="window.location.href='AddEmpRecord.jsp'" >Add Employee</button>
+        <button type="submit" class="btn btn-lg" onclick="window.location.href='Algorithm'" >Perform</button>
+          <button type="submit" class="btn btn-lg" onclick="window.location.href='AddEmpRecord.jsp'" >Add Employee Record</button>
         </div>
 
               
