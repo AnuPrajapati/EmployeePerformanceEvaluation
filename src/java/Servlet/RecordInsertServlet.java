@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,44 +35,58 @@ public class RecordInsertServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        int id = (int) session.getAttribute("id");
-        int statuscount = EmployeeDAO.getCountForStatus(1);
+//        int id = (int) session.getAttribute("id");
+        Cookie[] cookies = null;
+        String sid = null;
+        cookies = request.getCookies();
 
-        int inn = statuscount + 1;
-        String incstatus = EmployeeDAO.UpdatecountStatus(1, inn);
-        out.print(incstatus);
-        if (incstatus.equals("SUCCESS")) {
-            Connection conn = DBConnection.createConnection();
-            PreparedStatement stmt = null;
-
-            ResultSet rs = null;
-
-            String sql = "select * from employee   WHERE id=" + id + " order by e_id";
-
-            stmt = conn.prepareStatement(sql);
-
-            rs = stmt.executeQuery(sql);
-
-            out.println("inn=" + inn);
-            String in = null;
-            while (rs.next()) {
-
-                int eid = rs.getInt("e_id");
-                double com = Double.parseDouble(request.getParameter("communication" + eid));
-
-                double att = Double.parseDouble(request.getParameter("attendance" + eid));
-                double attitude = Double.parseDouble(request.getParameter("attitude" + eid));
-                double rel = Double.parseDouble(request.getParameter("reliability" + eid));
-                double work = Double.parseDouble(request.getParameter("work_product" + eid));
-                double adap = Double.parseDouble(request.getParameter("adaptability" + eid));
-
-                RecordModel model = new RecordModel(com, work, adap, rel, attitude, att, eid, id, inn);
-                in = EmployeeDAO.InsertRecord(model);
-
+        for (int i = 0; i < cookies.length; i++) {
+            if (cookies[i].getName().equals("id")) {
+                sid = cookies[i].getValue();
             }
+
+        }
+        int id = Integer.parseInt(sid);
+        int statuscount = EmployeeDAO.getCountForStatus(id);
+
+        Connection conn = DBConnection.createConnection();
+        PreparedStatement stmt = null;
+
+        ResultSet rs = null;
+
+        String sql = "select * from employee   WHERE id=" + id + " order by e_id";
+
+        stmt = conn.prepareStatement(sql);
+
+        rs = stmt.executeQuery(sql);
+
+        String in = null;
+        while (rs.next()) {
+
+            int eid = rs.getInt("e_id");
+            double com = Double.parseDouble(request.getParameter("communication" + eid));
+
+            double att = Double.parseDouble(request.getParameter("attendance" + eid));
+            double attitude = Double.parseDouble(request.getParameter("attitude" + eid));
+            double rel = Double.parseDouble(request.getParameter("reliability" + eid));
+            double work = Double.parseDouble(request.getParameter("work_product" + eid));
+            double adap = Double.parseDouble(request.getParameter("adaptability" + eid));
+
+            RecordModel model = new RecordModel(com, work, adap, rel, attitude, att, eid, id, statuscount + 1);
+            in = EmployeeDAO.InsertRecord(model);
+
+        }
+
+        if (in.equals("SUCCESS")) {
+            String incstatus = EmployeeDAO.UpdatecountStatus(id, statuscount + 1);
+            RequestDispatcher req = request.getRequestDispatcher("AllUserRecordDetail.jsp");
+            req.forward(request, response);
+
+        } else {
             RequestDispatcher req = request.getRequestDispatcher("AllUserRecordDetail.jsp");
             req.forward(request, response);
         }
+
     }
 
     @Override
@@ -81,8 +96,8 @@ public class RecordInsertServlet extends HttpServlet {
             processRequest(request, response);
 
         } catch (SQLException ex) {
-            Logger.getLogger(RecordInsertServlet.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            System.out.println("Errir in record insert");
         }
     }
 
@@ -93,8 +108,8 @@ public class RecordInsertServlet extends HttpServlet {
             processRequest(request, response);
 
         } catch (SQLException ex) {
-            Logger.getLogger(RecordInsertServlet.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            System.out.println("Errir in record insert");
         }
     }
 

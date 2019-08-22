@@ -8,8 +8,11 @@ package Servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,25 +39,42 @@ public class EmployeeServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        PrintWriter out = response.getWriter();
 
-            HttpSession res = request.getSession();
-            int id = (int) res.getAttribute("id");
-            System.out.println("id------------------------------" + id);
-            String query = request.getParameter("search");
+        Cookie[] cookies = null;
+        String sid = null;
+        cookies = request.getCookies();
 
-            EmployeeDAO empdao = new EmployeeDAO();
-            List<EmplyeeModel> emp = empdao.getAllUser(Integer.toString(id), query);
-
-            request.setAttribute("Employee_list", emp);
-            if (emp.size() != 0) {
-                RequestDispatcher requ = request.getRequestDispatcher("Employee.jsp");
-                requ.forward(request, response);
+        for (int i = 0; i < cookies.length; i++) {
+            if (cookies[i].getName().equals("id")) {
+                sid = cookies[i].getValue();
             }
 
-        } catch (Exception x) {
-            System.out.println("hdhd" + x.getMessage());
         }
+        int id = Integer.parseInt(sid);
+
+//            HttpSession res = request.getSession();
+//            int id = (int) res.getAttribute("id");
+        String query = request.getParameter("search");
+
+        EmployeeDAO empdao = new EmployeeDAO();
+        List<EmplyeeModel> emp = null;
+        try {
+            emp = empdao.getAllUser(Integer.toString(id), query);
+        } catch (Exception ex) {
+            System.out.println("Error in EmployeeServlet");
+        }
+
+        request.setAttribute("Employee_list", emp);
+        if (emp.size() != 0) {
+            RequestDispatcher requ = request.getRequestDispatcher("Employee.jsp");
+            requ.forward(request, response);
+        } else {
+
+            RequestDispatcher requ = request.getRequestDispatcher("popup.jsp");
+            requ.forward(request, response);
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

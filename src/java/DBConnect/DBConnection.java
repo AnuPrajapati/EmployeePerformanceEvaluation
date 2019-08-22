@@ -31,6 +31,7 @@ public class DBConnection {
             System.out.println("Printing connection object " + con);
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Xamp not open");
         }
 
         return con;

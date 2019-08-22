@@ -10,8 +10,15 @@
   <title>Employee Performance Evaluation System</title>
 </head>
 <body>
+ 
+        
 
        <%
+//           
+//           String msg=request.getAttribute("msg").toString();
+//           if(msg!=null){
+//               out.println(msg);
+//           }
            response.setHeader("Cache-Control","no-cache");
 response.setHeader("Cache-Control","no-store");
 response.setHeader("Pragma","no-cache");

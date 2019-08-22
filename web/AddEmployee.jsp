@@ -87,7 +87,19 @@
     </head>
     <body>
         <%
-             int id = (int) session.getAttribute("id");
+            Cookie[] cookies = null;
+     String sid=null;
+                    cookies = request.getCookies();
+                    
+          
+              for (int i = 0; i < cookies.length; i++) {
+                  if(cookies[i].getName().equals("id"))
+                  {
+             sid= cookies[i].getValue();
+                  }
+             
+            }
+              int id=Integer.parseInt(sid);
             request.getAttribute("su");
 //            response.sendRedirect("http://localhost:8080/EPEvaluation_backupforfinal/EmployeeServlet");
 

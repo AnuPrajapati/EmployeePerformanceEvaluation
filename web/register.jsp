@@ -3,11 +3,12 @@
       
         String b = request.getParameter("checkrandom");
         if (a!=Integer.parseInt(b)) {
-            out.println("Invalid number");
+    
         } else {
+        
             
   String email=request.getParameter("email");
-           
+         
 
        
     %>

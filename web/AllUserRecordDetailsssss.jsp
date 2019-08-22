@@ -18,7 +18,7 @@
         <link href="Contents/fonts/all.css" rel="stylesheet" type="text/css"/>  
         <link href="Contents/css/popup.css" rel="stylesheet" type="text/css"/>
         <style>
-           .emplyee_table{
+            .emplyee_table{
                 position: relative;
 
             }
@@ -71,39 +71,47 @@
     </head>
 
     <body>
-     <jsp:include page="HomeHeader.jsp"/>
-       
-
-
-            <%
-                 int id = (int) session.getAttribute("id");
-                 System.out.println("id============================"+id);
-                 String query = request.getParameter("search");
-                 
-                 out.println(query);
-                 
- 
-    
-             try{
-                List<EmplyeeModel> model = EmployeeDAO.ShowAllUserRecord(id,1,1,query);
-                      request.setAttribute("Employee_Record", model);
-             }catch(Exception x){
-                 
-             }
-
-          
-
-            %>
+        <jsp:include page="HomeHeader.jsp"/>
 
 
 
+        <%
+            Cookie[] cookies = null;
+            String sid = null;
+            cookies = request.getCookies();
 
-   
-             <div class="container emplyee_table">
+            for (int i = 0; i < cookies.length; i++) {
+                if (cookies[i].getName().equals("id")) {
+                    sid = cookies[i].getValue();
+                }
+
+            }
+            int id = Integer.parseInt(sid);
+            System.out.println("id============================" + id);
+            String query = request.getParameter("search");
+String status=session.getAttribute("status").toString();
+            out.println(status+"ssdetails");
+
+            try {
+                List<EmplyeeModel> model = EmployeeDAO.ShowAllUserRecord(id, Integer.parseInt(status), 1, query);
+                request.setAttribute("Employee_Record", model);
+            } catch (Exception x) {
+      x.printStackTrace();
+                 System.out.println("Error in AllUserRecordDetailssss.jsp");
+            }
+
+
+        %>
+
+
+
+
+
+        <div class="container emplyee_table">
             <form method="GET"><input type="text" id="search" name="search"  placeholder="Search for names.." title="Type in a name">
-      <div class="table-box">
+                <div class="table-box">
             </form>
-            
+
 
 
             <table class="table table-bordered">
@@ -118,16 +126,16 @@
                     <th>Reliability</th>
                     <th>Result</th>
                     <th>Action</th>
-                    
+
                 </tr>
                 <c:set  var="ino" value="0" scope="page"/>
                 <c:forEach var="tempuser" items="${Employee_Record}" >         
 
-  <c:set var="ino" value="${ino + 1}" scope="page"/>
-                        <tr>
-                            
-                            <td>${ino}</td>
-                          <td>${tempuser.name}</td>
+                    <c:set var="ino" value="${ino + 1}" scope="page"/>
+                    <tr>
+
+                        <td>${ino}</td>
+                        <td>${tempuser.name}</td>
                         <td>${tempuser.recordmodel.communication}</td>
                         <td>${tempuser.recordmodel.attendance}</td>
                         <td>${tempuser.recordmodel.attitude}</td>
@@ -135,33 +143,33 @@
                         <td>${tempuser.recordmodel.work_product}</td>
                         <td>${tempuser.recordmodel.reliablity}</td>
                         <td> ${tempuser.recordmodel.final_result}</td>
-                    
+
                         <td><form action="ViewReport.jsp" method="post" > 
                                 <input type="hidden" value="${tempuser.name}" name="name"/> 
-                                  <input type="hidden" value="${tempuser.address}" name="address"/> 
-                                    <input type="hidden" value="${tempuser.phone}" name="phone"/> 
-                                      <input type="hidden" value="${tempuser.e_id}" name="eid"/> 
+                                <input type="hidden" value="${tempuser.address}" name="address"/> 
+                                <input type="hidden" value="${tempuser.phone}" name="phone"/> 
+                                <input type="hidden" value="${tempuser.e_id}" name="eid"/> 
                                 <input type="submit" value="View"/></form>
                         </td>
                     </tr>
 
-                   
-                </c:forEach>
-               
-                 
-            </table>                 
-            </div>             
-               
-        </div>
-                  <jsp:include page="PieChart.jsp"/>
-                
-           
-                        <%--<jsp:forward page = "PerformEpes.jsp" />--%>
-        <jsp:include page="footer.jsp"/>
-       
-        <script src="Contents/js/jquery-3.4.0.js" type="text/javascript"></script>
-        <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>  
-<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 
-    </body>
+                </c:forEach>
+
+
+            </table>                 
+        </div>             
+
+    </div>
+    <jsp:include page="PieChart.jsp"/>
+
+
+    <%--<jsp:forward page = "PerformEpes.jsp" />--%>
+    <jsp:include page="footer.jsp"/>
+
+    <script src="Contents/js/jquery-3.4.0.js" type="text/javascript"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>  
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+
+</body>
 </html>

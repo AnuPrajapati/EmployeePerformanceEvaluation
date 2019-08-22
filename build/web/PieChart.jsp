@@ -6,12 +6,28 @@
 <script type="text/javascript">
 window.onload = function() {
 <% 
-     int id = (int) session.getAttribute("id");
+     Cookie[] cookies = null;
+     String sid=null;
+                    cookies = request.getCookies();
+                    
+        
+              for (int i = 0; i < cookies.length; i++) {
+                  if(cookies[i].getName().equals("id"))
+                  {
+             sid= cookies[i].getValue();
+                  }
+             
+            }
+//              int status=EmployeeDAO.getCountForStatus(mid)
+              String status=session.getAttribute("status").toString();
+              System.out.println("shhh"+status);
+              int s=Integer.parseInt(status);
+              int id=Integer.parseInt(sid);
       String companyname=EmployeeDAO.getCompany(id) ;
-    int good=EmployeeDAO.getCountGood(id,1,"Good");
-        int great=EmployeeDAO.getCountGood(id,1,"Great");
-            int poor=EmployeeDAO.getCountGood(id,1,"Poor");
-                int fair=EmployeeDAO.getCountGood(id,1,"Fair");
+    int good=EmployeeDAO.getCountGood(id,s);
+        int great=EmployeeDAO.getCountGreat(id,s);
+            int poor=EmployeeDAO.getCountPoor(id,s);
+                int fair=EmployeeDAO.getCountFair(id,s);
   
  
 
@@ -46,7 +62,9 @@ $("#chartContainer").CanvasJSChart(options);
 
 }
 </script>
-   
+      <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>  
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+
     
 <div id="chartContainer" style="height: 300px; width: 100%;"></div>
 </div>

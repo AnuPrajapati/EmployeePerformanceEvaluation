@@ -1,5 +1,6 @@
 package Kmeantest;
 
+import java.io.Console;
 import java.util.HashMap;
 
 public class KMeans {
@@ -107,6 +108,7 @@ public class KMeans {
                     if (cluster[j] == i) {
 
                         k[i][c++] = (int) hashTableObj.keySet().toArray()[j];
+
                         System.out.print(hashTableObj.keySet().toArray()[j] + ",");
 
                     }

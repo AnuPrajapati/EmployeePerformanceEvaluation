@@ -54,10 +54,12 @@ msg.setContent(messageText, "text/html");
 
 
 Transport transport = mailSession.getTransport("smtp");
+try{
 transport.connect(host, from, pass);
 
 
- try {
+
+
       transport.sendMessage(msg, msg.getAllRecipients());
       out.println("Send Success");
       boolean WasEmailSent = true;
@@ -130,8 +132,23 @@ transport.connect(host, from, pass);
 
 catch (Exception err) {
                        boolean WasEmailSent = false; 
-                      }
                   transport.close();
+
+ out.println("<script type=\"text/javascript\">");
+   out.println("alert('No internet Connection');");
+   out.println("location='index.jsp';");
+   out.println("</script>");
+
+                      }
+
+
+}else{
+
+ out.println("<script type=\"text/javascript\">");
+   out.println("alert('Email is already registered... Please Log in');");
+   out.println("location='index.jsp';");
+   out.println("</script>");
+
 }
                   
       %>

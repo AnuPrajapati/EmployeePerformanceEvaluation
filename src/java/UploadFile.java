@@ -47,6 +47,8 @@ public class UploadFile extends HttpServlet {
                 try {
                     items = upload.parseRequest(request);
                 } catch (FileUploadException ex) {
+                    RequestDispatcher re = request.getRequestDispatcher("/Excel.jsp");
+                    re.forward(request, response);
 
                 }
                 Iterator itr = items.iterator();
@@ -73,8 +75,8 @@ public class UploadFile extends HttpServlet {
 //                            File f = checkExist(filename);
                             request.setAttribute("filename", f.getAbsolutePath());
 
-                            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/Excel.jsp");
-                            requestDispatcher.forward(request, response);
+                            RequestDispatcher re = request.getRequestDispatcher("/Excel.jsp");
+                            re.forward(request, response);
 
                         }
 //
@@ -85,7 +87,7 @@ public class UploadFile extends HttpServlet {
 
             }
         } catch (Exception x) {
-
+            System.out.println("Error in uploadFile");
         }
 
     }

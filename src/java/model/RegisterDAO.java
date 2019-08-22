@@ -167,7 +167,7 @@ public class RegisterDAO {
                 reg = new RegisterModel(eid, email, pass, companyname, managername);
 
             } else {
-                throw new Exception("Couldnot found " + username);
+                reg = null;
             }
 
         } catch (Exception x) {

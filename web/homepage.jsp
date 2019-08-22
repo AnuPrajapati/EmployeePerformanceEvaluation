@@ -52,8 +52,7 @@ String cookie=null;
                           
          
 
-           String username= session.getAttribute("username").toString();
-             int id=(int) session.getAttribute("id");
+       
                 }
               }
               

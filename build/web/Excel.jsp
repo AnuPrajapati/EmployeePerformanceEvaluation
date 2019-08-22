@@ -70,81 +70,97 @@ pageEncoding="ISO-8859-1"%>
             }
         } catch (Exception e) {
             e.printStackTrace();
+System.out.println("Error in Excel.jsp");
         }
         return cellArrayLisstHolder;
     }
    
  %>
       <%
+          
+            Cookie[] cookies = null;
+            String sid = null;
+            cookies = request.getCookies();
+
+            for (int i = 0; i < cookies.length; i++) {
+                if (cookies[i].getName().equals("id")) {
+                    sid = cookies[i].getValue();
+                }
+
+            }
+            int id = Integer.parseInt(sid);
       String file=request.getAttribute("filename").toString();
-  
+
     ArrayList cellStoreArrayList=null;
                ArrayList dataHolder =readExcelFile(file);
+             
               cellStoreArrayList=(ArrayList)dataHolder.get(0);
-           String idd= cellStoreArrayList.get(0).toString();
-                   String name= cellStoreArrayList.get(1).toString();
-                         String address= cellStoreArrayList.get(2).toString();
-                         String phone= cellStoreArrayList.get(3).toString();
+//           String idd= cellStoreArrayList.get(0).toString();
+                   String name= cellStoreArrayList.get(0).toString().toLowerCase();
+                         String address= cellStoreArrayList.get(1).toString().toLowerCase();
+                         String phone= cellStoreArrayList.get(2).toString().toLowerCase();
                          if(name.contains("'")|| address.contains("'") ){
                              name.replace('\'', ' ');
                               address.replace('\'', ' ');
                            
                          }
+                              
                        
-                         if(idd.equals("id") && name.equals("name") && address.equals("address")&& phone.equals("phone"))
+                         if(name.equals("name") && address.equals("address")&& phone.equals("phone"))
                          {
     
       con=DBConnection.createConnection();
                 stmt =con.createStatement();
                int num=0;
                int num1=0;
-               out.print(dataHolder.size());
+
               
                                 for(int i=1;i<dataHolder.size();i++) {
+                                
                                      ArrayList  cellList=null;
                                    cellList=(ArrayList)dataHolder.get(i);
-                                  
-                                   String namee= cellList.get(1).toString();
-                         String add= cellList.get(2).toString();
-                         String ph = cellList.get(3).toString();
-                         out.print("Name="+ namee +"Address="+add+ "Phone="+ph+ "<br>");
-                                 int count=0;
-          rs=stmt.executeQuery("select * from employee where phone='"+ ph+"'");
-                               
-        while(rs.next()){
-           
-        count++;
-        }
-        if(count>0){
-           num1++;  
-        continue;
-
-        }
-        else{
-            int result;
-            num++;
+                              
+                                   String namee= cellList.get(0).toString();
+                                
+                         String add= cellList.get(1).toString();
+                         String ph = cellList.get(2).toString();
+                        System.out.println("Name="+ namee +"Address="+add+ "Phone="+ph+ "");
+                                
+            int result=0;
+            
             try
             {
-         result=stmt.executeUpdate("insert into employee(name,address,phone,id) values('"+namee+"','"+add+"','"+ph+"','1')");
+                    int random = (int) (Math.random() * 100000000) ; 
+               
+                 System.out.println("Name="+ namee +"Address="+add+ "Phone="+ph+ "id="+id);
+         result=stmt.executeUpdate("insert into employee(name,address,phone,id) values('"+namee+"','"+add+"','98"+random+"','"+ id +"')");
+         if(result>0){
+             response.sendRedirect("/EmployeeServlet");
+         }else{
+             response.sendRedirect("/EmployeeServlet");
+         }
             }catch(Exception ex){
+                ex.printStackTrace();
+                System.out.println("Error in Excel random"+ ex.getMessage());
                 
             }
-         System.out.println("hdhhdhdh");
+        
+            
         }
              }     
                                 
                                 
-                          out.println("<font color=green>Data is successfully inserted!</font> and You have inserted"+ num+"data and dubicated ="+num1);      
-                       
+                             
+               
                       
   
             
 }
 else{
+                             response.sendRedirect("EPEvaluation_backupforfinal/EmployeeServlet");
 out.println("Incorrect file ....");
 }
 %>
-
-//         
+         
                  </body>
                   </html>

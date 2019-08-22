@@ -31,16 +31,6 @@ public class LoginServlets extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-//        HttpSession session = request.getSession();
-//
-//        int a = (int) session.getAttribute("random");
-//        out.print(a);
-//        String b = request.getParameter("checkrandom");
-//        if (Integer.parseInt(b) == a) {
-//            out.println("Same");
-//        } else {
-//            out.println("Different a=" + a + "b=" + b);
-//        }
 
         String name = request.getParameter("username");
         String pass = request.getParameter("password");
@@ -49,11 +39,11 @@ public class LoginServlets extends HttpServlet {
         RegisterModel individual = reg.ShowIndividual(name, pass);
 //        out.println(individual);
         if (individual == null) {
+            out.println("<script type=\"text/javascript\">");
+            out.println("alert('Invalid username or password');");
+            out.println("location='index.jsp';");
+            out.println("</script>");
 
-            RequestDispatcher res = request.getRequestDispatcher("Login_Error.jsp");
-//            out.println("<font color=red>Either user name or password is wrong.</font>");
-            res.include(request, response);
-//            request.getRequestDispatcher("/login.jsp").forward(request, response);
         } else {
 
             HttpSession session = request.getSession(true); // reuse existing
@@ -61,16 +51,22 @@ public class LoginServlets extends HttpServlet {
             // or create one
 
             Cookie username = new Cookie("username", name);
+            Cookie id = new Cookie("id", String.valueOf(individual.getId()));
 
             session.setAttribute("id", individual.getId());
 
             session.setAttribute("username", name);
 
             response.addCookie(username);
+            response.addCookie(id);
             // 30 seconds
 
-            response.sendRedirect("homepage.jsp");
+            out.println("<script type=\"text/javascript\">");
+            out.println("alert('Login Successful');");
+            out.println("location='homepage.jsp';");
+            out.println("</script>");
 
+//            response.sendRedirect("homepage.jsp");
         }
     }
 

@@ -49,7 +49,7 @@
                 height: 591px;
                 overflow-y: scroll;
                 background: #fff;
-                box-shadow: 4px 4px 10px 20px #ddd;
+                box-shadow: 0 10px 100px rgba(255, 0, 0, 0.5);
             }
             th{
                 position: sticky;
@@ -69,18 +69,7 @@
             }
 
         </style>
-        <script language="javascript" type="text/javascript">
-            
-        function test() {
-            var listVal = document.getElementById("searchstatus").value;
-            if (! listVal) {
-               alert(listVal);
-            }
-           
-      }
    
-
-</script>
     </head>
 
     <body>
@@ -88,20 +77,34 @@
 
 
             <%
- String id = session.getAttribute("id").toString();
+                 Cookie[] cookies = null;
+            String sid = null;
+            cookies = request.getCookies();
+
+            for (int i = 0; i < cookies.length; i++) {
+                if (cookies[i].getName().equals("id")) {
+                    sid = cookies[i].getValue();
+                }
+
+            }
+            int id = Integer.parseInt(sid);
+// String id = session.getAttribute("id").toString();
   String status = request.getParameter("searchstatus");
+  
   System.out.println("staus"+ status);
+  session.setAttribute("status", status);
   
 
  //getsearch
              try{
                  
-                 List<EmplyeeModel> model  = EmployeeDAO.ShowAllUserRecord(Integer.parseInt(id),Integer.parseInt(status),0,null);
+                 List<EmplyeeModel> model  = EmployeeDAO.ShowAllUserRecord(id,Integer.parseInt(status),0,null);
                   
                       request.setAttribute("Employee_Record", model);
                     
              }catch(Exception x){
-                 
+                 x.printStackTrace();
+                 System.out.println("Error in AllUserRecordDetail.jsp");
              }
 
           
@@ -118,11 +121,11 @@
        <form method="get" class="form-inline">
         <div class="form-group mb-2">    
         <select id="searchstatus" class="form-control" name="searchstatus" >
-            <%    int name = EmployeeDAO.getCountForStatus(Integer.parseInt(id));
+            <%    int name = EmployeeDAO.getCountForStatus(id);
             %>
            
             <%
-                for (int i = name; i > 0; i--) {
+                for (int i = 1; i <=name; i++) {
             %>
             <option value="<%=i%>" >Record <%=i%></option>
             <%
@@ -183,9 +186,12 @@
                   
 
                     <%
-      
+   
+        
 //
             number.put((Integer)request.getAttribute("eid"), (Double)request.getAttribute("mean"));
+        
+        
 
 %>
   
@@ -202,8 +208,8 @@
         </div>
              
            <div class="container">       
-        <button type="submit" class="btn btn-lg" onclick="window.location.href='Algorithm'" >Perform</button>
-          <button type="submit" class="btn btn-lg" onclick="window.location.href='AddEmpRecord.jsp'" >Add Employee Record</button>
+        <button type="submit" class="btn btn-lg btn-danger" onclick="window.location.href='Algorithm'" >Perform</button>
+          <button type="submit" class="btn btn-lg btn-danger" onclick="window.location.href='AddEmpRecord.jsp'" >Add Employee Record</button>
         </div>
 
               

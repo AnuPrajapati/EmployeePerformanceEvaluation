@@ -4,7 +4,7 @@
     Author     : USER
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,8 +14,7 @@
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css"/>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"  crossorigin="anonymous">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script src="Contents/js/jquery-3.4.0.js" type="text/javascript"></script>
-        <script src="Contents/js/jquery.validate.js" type="text/javascript"></script>
+       
         <style type="text/css">
            
             i.userfa{
@@ -57,6 +56,7 @@
         </style>
         
     </head>
+  
     <%
            response.setHeader("Cache-Control","no-cache");
 response.setHeader("Cache-Control","no-store");
@@ -131,8 +131,7 @@ String cookie=null;
            $('#usercheck').hide();  
            $('#passwordcheck').hide();  
                       
-           var user_err = true;
-      
+           var user_err = true;      
            var password_err = true;
            
            $('#username').keyup(function(){
@@ -162,7 +161,9 @@ String cookie=null;
               
            }
            
-      
+        $('#username').keyup(function(){
+              password_check();              
+           });
            
            function password_check(){
                var passwordstr =  $('#password').val();
@@ -183,59 +184,19 @@ String cookie=null;
                    $('#passwordfaerror').css("display","none");
                    $('#passwordfasuccess').css("display","block");
                }
-               
-               if((passwordstr.length < 3)||(passwordstr.length > 10)){
-                   $('#passwordcheck').show();                   
-                   $('#passwordcheck').html("**Passworde must be between 3-10");
-                   $('#passwordcheck').focus();
-                   $('#passwordcheck').css("color","red");
-                    $('#password').css("border","1.5px solid red");
-                   $('#passwordfaerror').css("display","block");
-                   $('#passwordfasuccess').css("display","none");
-                   password_err = false;
-                   return false;
-               }else{
-                   $('#passwordcheck').hide();
-                    $('#password').css("border","1.5px solid green");
-                   $('#passwordfaerror').css("display","none");
-                   $('#passwordfasuccess').css("display","block");
-               }
+             
            }
            
-           $('#repassword').keyup(function(){
-              re_password_check(); 
-           });
-           function re_password_check(){
-                var passwordstr =  $('#password').val();
-                var repasswordstr = $('#repassword').val();
-                if(passwordstr != repasswordstr){
-                   $('#repasswordcheck').show();                   
-                   $('#repasswordcheck').html("**Password are not Matching");
-                   $('#repasswordcheck').focus();
-                   $('#repasswordcheck').css("color","red");
-                    $('#repassword').css("border","1.5px solid red");
-                   $('#repasswordfaerror').css("display","block");
-                   $('#repasswordfasuccess').css("display","none");                   
-                   repassword_err = false;
-                   return false;
-               }else{
-                   $('#repasswordcheck').hide();
-                    $('#repassword').css("border","1.5px solid green");
-                   $('#repasswordfaerror').css("display","none");
-                   $('#repasswordfasuccess').css("display","block");
-               }
-           }
+           
            
            $('#submitbtn').click(function(){
-            company_err = true;
+            user_err = true;
             password_err = true;
-            repassword_err = true;
             
-            company_check(); 
+            user_check(); 
             password_check(); 
-            re_password_check(); 
             
-            if((company_err == true) && (password_err == true) && (password_err == true) ){
+            if((user_err == true) && (password_err = true )){
                 return true;
             }else{
                 return false;
@@ -247,6 +208,8 @@ String cookie=null;
             <%
                 }
 }%>
+ <script src="Contents/js/jquery-3.4.0.js" type="text/javascript"></script>
+        <script src="Contents/js/jquery.validate.js" type="text/javascript"></script>
     </body>
 </html>
 

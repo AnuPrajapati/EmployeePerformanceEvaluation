@@ -60,10 +60,12 @@ public class EmployeeDAO {
 
             if (i != 0) //Just to ensure data has been inserted into the database
             {
+
                 return "SUCCESS";
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 67");
         } finally {
             // close JDBC objects
             close(con, preparedStatement, null);
@@ -73,36 +75,11 @@ public class EmployeeDAO {
         // On failure, send a message from here.
     }
 
-    // count for status in record table
-    public static int countStatus(int mid) {
-        int a = 0;
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            ;
-            conn = DBConnection.createConnection();
-            String sql = "select r.status from record r inner join employee e on r.e_id=e.e_id inner join manager m on e.id=m.id WHERE m.id=" + mid + " ORDER BY r.status DESC LIMIT 1";
-
-            stmt = conn.createStatement();
-
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                a = rs.getInt("status");
-            }
-
-        } catch (SQLException ex) {
-            System.out.println("Error in controller.Setting of viewdata");
-        }
-        return a;
-    }
-
     //insert to evaluate table taking pid and rid
     public static String AddEvaluate(int pid, int rid) {
         Connection con = null;
         PreparedStatement preparedStatement = null;
-        boolean result = false;
-        String sql = null;
+
         try {
             con = DBConnection.createConnection();
 
@@ -120,6 +97,7 @@ public class EmployeeDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 124");
         } finally {
             // close JDBC objects
             close(con, preparedStatement, null);
@@ -152,6 +130,7 @@ public class EmployeeDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 157");
         } finally {
             // close JDBC objects
             close(con, preparedStatement, null);
@@ -224,7 +203,8 @@ public class EmployeeDAO {
             }
 
         } catch (SQLException ex) {
-            System.out.println("Error in controller.Setting of viewdata");
+            ex.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 231");
         }
         return a;
     }
@@ -248,6 +228,7 @@ public class EmployeeDAO {
 
         } catch (SQLException ex) {
             ex.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 255");
         }
         return result;
     }
@@ -272,7 +253,8 @@ public class EmployeeDAO {
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 281");
         }
         return result;
 
@@ -305,10 +287,14 @@ public class EmployeeDAO {
 
             if (i != 0) //Just to ensure data has been inserted into the database
             {
+                int count = getCountForStatus(id);
+                InsertcountStatus(id, count);
                 return "SUCCESS";
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 318");
         } finally {
             // close JDBC objects
             close(con, preparedStatement, null);
@@ -340,7 +326,8 @@ public class EmployeeDAO {
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 352");
         }
         return result;
     }
@@ -366,6 +353,7 @@ public class EmployeeDAO {
             return "Success";
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 378");
         } finally {
             // close JDBC objects
             close(con, preparedStatement, null);
@@ -391,6 +379,33 @@ public class EmployeeDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 403");
+        } finally {
+            // close JDBC objects
+            close(con, pst, null);
+        }
+
+        return "Oops.. Something went wrong there. in updating record.!";
+        // On failure, send a message from here.
+    }
+
+    public static String InsertcountStatus(int mid, int count) {
+
+        Connection con = null;
+        PreparedStatement pst = null;
+        try {
+            con = DBConnection.createConnection();
+            String query = "insert into countrecord (count,mid) values(?,?) "; //update user details into the table 'USERS'
+            pst = con.prepareCall(query);
+            pst.setInt(1, count);
+            pst.setInt(2, mid);
+            pst.executeUpdate();
+
+            return "SUCCESS";
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error in EmployeeDAO in line 403");
         } finally {
             // close JDBC objects
             close(con, pst, null);
@@ -458,6 +473,42 @@ public class EmployeeDAO {
             // close JDBC objects
             close(myConn, myStmt, myRs);
         }
+    }
+
+    public static String ShowResultExits(Object id) throws Exception {
+
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+        ResultSet myRs = null;
+        int check = 0;
+        String a = null;
+
+        try {
+            // get a connection
+            myConn = DBConnection.createConnection();
+            // create sql statement
+            String sql = "select p.final_result  from performance p inner join record r on p.r_id=r.r_id where r.e_id=?";
+
+            myStmt = myConn.prepareStatement(sql);
+            int idd = Integer.parseInt(id.toString());
+            //set param
+            myStmt.setInt(1, idd);
+
+            //execute statement
+            myRs = myStmt.executeQuery();
+            System.out.println("dd" + myRs);
+            //retrieve data from rs
+            while (myRs.next()) {
+                a = "SUCCESS";
+
+            }
+
+        } finally {
+            // close JDBC objects
+            close(myConn, myStmt, myRs);
+        }
+        a = "Fail";
+        return a;
     }
 
     //show individual record of specied employee id
@@ -602,34 +653,6 @@ public class EmployeeDAO {
         }
     }
 
-    //count the  mo. of good
-    public static int getCountGood(int mid, int status, String result) {
-        Connection con = null;
-        java.sql.Statement s = null;
-        java.sql.ResultSet rs = null;
-        int good = 0;
-        con = DBConnection.createConnection();
-
-        String sql = " SELECT count(p.final_result) as Good from performance p inner join record r  on p.r_id=r.r_id INNER join employee e on r.e_id=e.e_id inner join manager m on e.id=m.id where m.id=" + mid + " AND status=" + status + "  AND p.final_result=" + result + "";
-
-        try {
-            s = con.createStatement();
-            rs = s.executeQuery(sql);
-
-            if (rs.next()) { //while start
-                good = rs.getInt("Good");
-            }
-        } catch (Exception x) {
-            x.printStackTrace();
-            System.out.println("Error:" + x.getMessage());
-        } finally {
-            // close JDBC objects
-            close(con, s, rs);
-        }
-
-        return good;
-    }
-
     //for company
     public static String getCompany(int mid) {
         Connection con = null;
@@ -683,6 +706,121 @@ public class EmployeeDAO {
         }
 
         return fair;
+    }
+
+    public static int getCountPoor(int mid, int status) {
+        Connection con = null;
+        java.sql.Statement s = null;
+        java.sql.ResultSet rs = null;
+        int good = 0;
+        con = DBConnection.createConnection();
+        System.out.println("-------------------");
+
+        String sql = " SELECT count(p.final_result) as Poor  from performance p inner join record r  on p.r_id=r.r_id INNER join employee e on r.e_id=e.e_id inner join manager m on e.id=m.id where m.id=" + mid + " AND status=" + status + "  AND p.final_result='Poor' ";
+
+        try {
+            s = con.createStatement();
+            rs = s.executeQuery(sql);
+
+            if (rs.next()) { //while start
+                good = rs.getInt("Poor");
+            }
+        } catch (Exception x) {
+            x.printStackTrace();
+            System.out.println("Error:" + x.getMessage());
+        } finally {
+            // close JDBC objects
+            close(con, s, rs);
+        }
+        System.out.println("---------------" + good);
+        return good;
+    }
+    //count the  mo. of good
+
+    public static int getCountGood(int mid, int status) {
+        Connection con = null;
+        java.sql.Statement s = null;
+        java.sql.ResultSet rs = null;
+        int good = 0;
+        con = DBConnection.createConnection();
+        System.out.println("-------------------");
+
+        String sql = " SELECT count(p.final_result) as Good from performance p inner join record r  on p.r_id=r.r_id INNER join employee e on r.e_id=e.e_id inner join manager m on e.id=m.id where m.id=" + mid + " AND status=" + status + "  AND p.final_result='Good' ";
+
+        try {
+            s = con.createStatement();
+            rs = s.executeQuery(sql);
+
+            if (rs.next()) { //while start
+                good = rs.getInt("Good");
+            }
+        } catch (Exception x) {
+            x.printStackTrace();
+            System.out.println("Error:" + x.getMessage());
+        } finally {
+            // close JDBC objects
+            close(con, s, rs);
+        }
+        System.out.println("---------------" + good);
+        return good;
+    }
+
+    public static int getCountFair(int mid, int status) {
+        Connection con = null;
+        java.sql.Statement s = null;
+        java.sql.ResultSet rs = null;
+        int good = 0;
+        con = DBConnection.createConnection();
+        System.out.println("-------------------");
+
+        String sql = " SELECT count(p.final_result) as Fair  from performance p inner join record r  on p.r_id=r.r_id INNER join employee e on r.e_id=e.e_id inner join manager m on e.id=m.id where m.id=" + mid + " AND status=" + status + "  AND p.final_result='Fair' ";
+
+        try {
+            s = con.createStatement();
+            rs = s.executeQuery(sql);
+
+            if (rs.next()) { //while start
+                good = rs.getInt("Fair");
+            }
+        } catch (Exception x) {
+
+            x.printStackTrace();
+            System.out.println("Error:" + x.getMessage());
+        } finally {
+            // close JDBC objects
+            close(con, s, rs);
+        }
+        System.out.println("---------------" + good);
+        return good;
+    }
+    //count the  mo. of good
+
+    public static int getCountGreat(int mid, int status) {
+        Connection con = null;
+        java.sql.Statement s = null;
+        java.sql.ResultSet rs = null;
+        int good = 0;
+        con = DBConnection.createConnection();
+        System.out.println("-------------------");
+
+        String sql = " SELECT count(p.final_result) as Great from performance p inner join record r  on p.r_id=r.r_id INNER join employee e on r.e_id=e.e_id inner join manager m on e.id=m.id where m.id=" + mid + " AND status=" + status + "  AND p.final_result='Great' ";
+
+        try {
+            s = con.createStatement();
+            rs = s.executeQuery(sql);
+
+            if (rs.next()) { //while start
+                good = rs.getInt("Great");
+            }
+        } catch (Exception x) {
+            x.printStackTrace();
+            System.out.println("Error:" + x.getMessage());
+        } finally {
+            // close JDBC objects
+            close(con, s, rs);
+        }
+        System.out.println("---------------" + good);
+        return good;
     }
 
 }

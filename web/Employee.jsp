@@ -75,8 +75,21 @@
     </head>
     <body>
         <%
-             int id = (int) session.getAttribute("id");
-             int result = RegisterDAO.existsEmployeeIDofManager(2);
+             Cookie[] cookies = null;
+     String sid=null;
+                    cookies = request.getCookies();
+                    
+        
+              for (int i = 0; i < cookies.length; i++) {
+                  if(cookies[i].getName().equals("id"))
+                  {
+             sid= cookies[i].getValue();
+                  }
+             
+            }
+              int id=Integer.parseInt(sid);
+//             int id = (int) session.getAttribute("id");
+             int result = RegisterDAO.existsEmployeeIDofManager(id);
            
               // to disable caching on the back button of the browser
           
@@ -88,7 +101,7 @@
             %>
         <jsp:include page="HomeHeader.jsp"/>
         <div class="container emplyee_table">
-            <form method="GET"><input type="text" id="search" name="search"  placeholder="Search for names.." title="Type in a name">
+            <form method="post"><input type="text" id="search" name="search"  placeholder="Search for names.." title="Type in a name">
           
       <div class="table-box">
             </form>
@@ -119,29 +132,10 @@
       </div>
         <div class="container">       
         <button type="submit" class="btn btn-lg" onclick="window.location.href='AllUserRecordDetail.jsp'" >Show Rating Data</button>
-          <button type="submit" class="btn btn-lg" onclick="window.location.href='AddEmployee.jsp'" >Add Employee</button>
+          <button type="submit" class="btn btn-lg" onclick="window.location.href='popup.jsp'" >Add Employee</button>
         </div>
         
-        <div class="modal fade text-center py-5" style="top:30px" id="thanksModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <img src="https://sunlimetech.com/portfolio/sunlimeuikit/imgs/s.png" class="modal-img">
-                            <h3 class="pt-5 mb-0 text-secondary">Welcome to Our EPES Systemt!</h3>
-                            <p class="pb-3 text-muted"><small>Hope that you enjoy it well! Check also our site</small></p>
-                            <h3>1. Import from the Computer</h3>
-                            <form class="form-inline" action="UploadFile" method="post" enctype="multipart/form-data">
-                                <div class="form-group mx-sm-3 mb-2">    
-                                    <input type="file" class="form-control-file" name="filetoupload">
-                                </div>
-                                <button type="submit" class="btn btn-secondary text-white mb-3">Upload File</button>
-                            </form>
-                            <h3>2. Manual Add </h3>
-                            <a role="button" class="btn btn-secondary text-white mb-3" onclick="window.location.href = 'AddEmployee.jsp'">Manual Add</a>
-                        </div>
-                    </div>
-                </div>
-        </div>
+       
         
         
         <jsp:include page="footer.jsp"/>
@@ -149,25 +143,7 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
           
-                
- <script type="text/javascript">
-       $(document).ready(function(){           
-           
-           $(window).onload(function(){
-              Popup_check();              
-           });
-           
-           function Popup_check(){
-               var result = <%=result%>               
-               if(result == ''){
-                   $('#thanksModal').modal(show);  
-           }
-           
-          
-           
-       }
-       });
-            </script>
+
 
 
 
